@@ -9,12 +9,19 @@ npm install
 To fire up a development server:
 
 ```
-npm run server
+npm start
 ```
 
 
 To build the static files:
 
 ```js
-npm run build
+npm build
+```
+
+
+To run tests:
+
+```js
+npm test
 ```
