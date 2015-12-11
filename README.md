@@ -20,7 +20,7 @@ Once the server is running, you can visit:
 To build the static files:
 
 ```js
-npm build
+npm run build
 ```
 
 
