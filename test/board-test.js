@@ -4,9 +4,6 @@ const Board = require('../lib/board');
 
 describe('board', function(){
   context('initialization',function(){
-    it.skip('should have a boardSize', function(){
-      assert.equal((new Board()).boardSize, 4);
-    });
 
     it('should have an array of slots', function(){
       assert.isArray((new Board()).slots);
