@@ -29,4 +29,26 @@ describe('board', function(){
       })
     })
   })
+
+  context('operations', function() {
+
+    it('should be able to get slot by coords', function() {
+      var board = new Board();
+      slot = board.coordsToSlot(0,0,0);
+      assert.equal(slot.x, 0);
+      assert.equal(slot.y, 0);
+      assert.equal(slot.z, 0);
+    });
+
+    it('should be able to get all slots by coords', function() {
+      var board = new Board();
+      board.slots.forEach(function(slot) {
+        slotFound = board.coordsToSlot(slot.x, slot.y, slot.z);
+        assert.equal(slotFound.x, slot.x);
+        assert.equal(slotFound.y, slot.y);
+        assert.equal(slotFound.z, slot.z);
+      })
+    });
+
+  });
 });
