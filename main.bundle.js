@@ -50,7 +50,9 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	const Board = __webpack_require__(2);
+	const _ = __webpack_require__(2);
+
+	const Board = __webpack_require__(3);
 	const Shape = __webpack_require__(7);
 	const hexHelper = __webpack_require__(5);
 
@@ -98,7 +100,7 @@
 	  }, false);
 	}
 
-	board.addRandomTiles();
+	// board.addRandomTiles();
 
 	requestAnimationFrame(function gameLoop() {
 	  ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -129,6 +131,7 @@
 	    score += board.removeFullLines();
 	    console.log("score:", score);
 	    document.getElementById("score-value").innerText = score;
+	    if (!board.movesRemaining(_.values(shapesInWaiting))) alert("No more moves");
 	  }
 
 	  isMouseDown = false;
@@ -152,134 +155,6 @@
 
 /***/ },
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
-
-	const _ = __webpack_require__(3);
-
-	const Slot = __webpack_require__(4);
-	const Tile = __webpack_require__(6);
-	const hexHelper = __webpack_require__(5);
-
-	function Board(context) {
-	  this.boardSize = 4;
-	  this.slots = [];
-
-	  for (var x = -this.boardSize; x <= this.boardSize; x++) {
-	    for (var y = -this.boardSize; y <= this.boardSize; y++) {
-	      for (var z = -this.boardSize; z <= this.boardSize; z++) {
-	        if (x + y + z == 0) {
-	          var slot = new Slot(x, y, z, context);
-	          this.slots.push(slot);
-	        }
-	      }
-	    }
-	  }
-	}
-
-	Board.prototype.addRandomTiles = function () {
-	  this.slots.forEach(function (slot) {
-	    if (Math.random() > .8) slot.tile = new Tile("../images/tile_hex_1.svg");
-	  });
-	};
-
-	Board.prototype.drawPotentialSlots = function (mouseX, mouseY, shape) {
-	  if (!shape) return;
-	  if (!this.validDrop(mouseX, mouseY, shape)) return;
-	  mouseX += -hexHelper.boardOffset.x;
-	  mouseY += -hexHelper.boardOffset.y;
-	  var [cx, cy] = hexHelper.nearestHexCenterFromPixels(mouseX, mouseY);
-	  cx += hexHelper.boardOffset.x;
-	  cy += hexHelper.boardOffset.y;
-	  shape.draw(cx, cy);
-	};
-
-	Board.prototype.validDrop = function (mouseX, mouseY, shape) {
-	  if (!shape) return;
-	  mouseX += -hexHelper.boardOffset.x;
-	  mouseY += -hexHelper.boardOffset.y;
-
-	  var [x, y, z] = hexHelper.pixelsToHex(mouseX, mouseY);
-	  return this.validShapeAtCoords(x, y, z, shape);
-	};
-
-	Board.prototype.coordsToSlot = function (x, y, z) {
-	  var matchCoords = [x, y, z];
-	  return this.slots.reduce(function (slot, slotToCheck) {
-	    currentCoords = [slotToCheck.x, slotToCheck.y, slotToCheck.z];
-	    return _.isEqual(matchCoords, currentCoords) ? slotToCheck : slot;
-	  }, false);
-	};
-
-	Board.prototype.addTilesFromShape = function (mouseX, mouseY, shape) {
-	  if (!shape) return;
-	  if (!this.validDrop(mouseX, mouseY, shape)) return;
-	  mouseX += -hexHelper.boardOffset.x;
-	  mouseY += -hexHelper.boardOffset.y;
-
-	  var [x, y, z] = hexHelper.pixelsToHex(mouseX, mouseY);
-	  var board = this;
-	  shape.tiles.forEach(function (tileOpts) {
-	    var tile = new Tile(shape.image);
-	    board.coordsToSlot(x + tileOpts.x, y + tileOpts.y, z + tileOpts.z).tile = tile;
-	  });
-	};
-
-	Board.prototype.removeFullLines = function () {
-	  //get full rows
-	  var board = this;
-	  var fullRows = ["x", "y", "z"].reduce(function (allRows, axis) {
-	    for (var n = -board.boardSize; n <= board.boardSize; n++) {
-	      allRows.push(board.getRow(axis, n));
-	    }
-	    return allRows;
-	  }, []).filter(function (row) {
-	    return _.every(row, function (slot) {
-	      return slot.tile != undefined;
-	    });
-	  });
-
-	  var multiplier = 1;
-	  var score = 0;
-	  fullRows.forEach(function (fullRow) {
-	    fullRow.forEach(function (slot) {
-	      slot.tile = undefined;
-	    });
-	    score += fullRow.length * 500 * multiplier;
-	    multiplier++;
-	  });
-
-	  return score;
-	};
-
-	Board.prototype.validShapeAtCoords = function (x, y, z, shape) {
-	  if (!shape) return;
-	  var coordsToCheck = shape.tiles.map(function (tile) {
-	    return [x + tile.x, y + tile.y, z + tile.z];
-	  });
-
-	  board = this;
-	  return _.every(coordsToCheck, function (coords) {
-	    slot = board.coordsToSlot(coords[0], coords[1], coords[2]);
-	    return slot && slot.tile == undefined;
-	  });
-	};
-
-	Board.prototype.getRow = function (axis, rowNumber) {
-	  return this.slots.filter(function (slot) {
-	    return slot[axis] == rowNumber;
-	  });
-	};
-
-	Board.prototype.draw = function () {
-	  this.slots.forEach(function (slot) {
-	    slot.draw();
-	  });
-	};
-
-	module.exports = Board;
-
-/***/ },
-/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Underscore.js 1.8.3
@@ -1833,6 +1708,143 @@
 
 
 /***/ },
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	const _ = __webpack_require__(2);
+
+	const Slot = __webpack_require__(4);
+	const Tile = __webpack_require__(6);
+	const hexHelper = __webpack_require__(5);
+
+	function Board(context) {
+	  this.boardSize = 4;
+	  this.slots = [];
+
+	  for (var x = -this.boardSize; x <= this.boardSize; x++) {
+	    for (var y = -this.boardSize; y <= this.boardSize; y++) {
+	      for (var z = -this.boardSize; z <= this.boardSize; z++) {
+	        if (x + y + z == 0) {
+	          var slot = new Slot(x, y, z, context);
+	          this.slots.push(slot);
+	        }
+	      }
+	    }
+	  }
+	}
+
+	Board.prototype.addRandomTiles = function () {
+	  this.slots.forEach(function (slot) {
+	    if (Math.random() > .8) slot.tile = new Tile("../images/tile_hex_1.svg");
+	  });
+	};
+
+	Board.prototype.drawPotentialSlots = function (mouseX, mouseY, shape) {
+	  if (!shape) return;
+	  if (!this.validDrop(mouseX, mouseY, shape)) return;
+	  mouseX += -hexHelper.boardOffset.x;
+	  mouseY += -hexHelper.boardOffset.y;
+	  var [cx, cy] = hexHelper.nearestHexCenterFromPixels(mouseX, mouseY);
+	  cx += hexHelper.boardOffset.x;
+	  cy += hexHelper.boardOffset.y;
+	  shape.draw(cx, cy);
+	};
+
+	Board.prototype.validDrop = function (mouseX, mouseY, shape) {
+	  if (!shape) return;
+	  mouseX += -hexHelper.boardOffset.x;
+	  mouseY += -hexHelper.boardOffset.y;
+
+	  var [x, y, z] = hexHelper.pixelsToHex(mouseX, mouseY);
+	  return this.validShapeAtCoords(x, y, z, shape);
+	};
+
+	Board.prototype.coordsToSlot = function (x, y, z) {
+	  var matchCoords = [x, y, z];
+	  return this.slots.reduce(function (slot, slotToCheck) {
+	    currentCoords = [slotToCheck.x, slotToCheck.y, slotToCheck.z];
+	    return _.isEqual(matchCoords, currentCoords) ? slotToCheck : slot;
+	  }, false);
+	};
+
+	Board.prototype.addTilesFromShape = function (mouseX, mouseY, shape) {
+	  if (!shape) return;
+	  if (!this.validDrop(mouseX, mouseY, shape)) return;
+	  mouseX += -hexHelper.boardOffset.x;
+	  mouseY += -hexHelper.boardOffset.y;
+
+	  var [x, y, z] = hexHelper.pixelsToHex(mouseX, mouseY);
+	  var board = this;
+	  shape.tiles.forEach(function (tileOpts) {
+	    var tile = new Tile(shape.image);
+	    board.coordsToSlot(x + tileOpts.x, y + tileOpts.y, z + tileOpts.z).tile = tile;
+	  });
+	};
+
+	Board.prototype.removeFullLines = function () {
+	  //get full rows
+	  var board = this;
+	  var fullRows = ["x", "y", "z"].reduce(function (allRows, axis) {
+	    for (var n = -board.boardSize; n <= board.boardSize; n++) {
+	      allRows.push(board.getRow(axis, n));
+	    }
+	    return allRows;
+	  }, []).filter(function (row) {
+	    return _.every(row, function (slot) {
+	      return slot.tile != undefined;
+	    });
+	  });
+
+	  var multiplier = 1;
+	  var score = 0;
+	  fullRows.forEach(function (fullRow) {
+	    fullRow.forEach(function (slot) {
+	      slot.tile = undefined;
+	    });
+	    score += fullRow.length * 500 * multiplier;
+	    multiplier++;
+	  });
+
+	  return score;
+	};
+
+	Board.prototype.validShapeAtCoords = function (x, y, z, shape) {
+	  if (!shape) return;
+	  var coordsToCheck = shape.tiles.map(function (tile) {
+	    return [x + tile.x, y + tile.y, z + tile.z];
+	  });
+
+	  board = this;
+	  return _.every(coordsToCheck, function (coords) {
+	    slot = board.coordsToSlot(coords[0], coords[1], coords[2]);
+	    return slot && slot.tile == undefined;
+	  });
+	};
+
+	Board.prototype.getRow = function (axis, rowNumber) {
+	  return this.slots.filter(function (slot) {
+	    return slot[axis] == rowNumber;
+	  });
+	};
+
+	Board.prototype.movesRemaining = function (shapes) {
+	  board = this;
+	  return _.any(this.slots, function (slot) {
+	    return _.any(shapes, function (shape) {
+	      return board.validShapeAtCoords(slot.x, slot.y, slot.z, shape);
+	    });
+	  });
+	};
+
+	Board.prototype.draw = function () {
+	  this.slots.forEach(function (slot) {
+	    slot.draw();
+	  });
+	};
+
+	module.exports = Board;
+
+/***/ },
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -1992,27 +2004,63 @@
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
-	const _ = __webpack_require__(3);
+	const _ = __webpack_require__(2);
 	const Tile = __webpack_require__(6);
 	const hexHelper = __webpack_require__(5);
 
 	var image_width = hexHelper.size * 2 - 2;
 
-	const possibleShapes = [[[0, 0, 0]], [[-1, 0, 1], [0, 0, 0], [1, 0, -1], [2, 0, -2]], [[-1, 1, 0], [0, 0, 0], [1, -1, 0], [2, -2, 0]], [[0, -1, 1], [0, 0, 0], [0, 1, -1], [0, 2, -2]], [[0, -1, 1], [0, 0, 0], [0, 1, -1], [1, -1, 0]], [[0, -1, 1], [0, 0, 0], [0, 1, -1], [-1, 1, 0]], [[-1, 1, 0], [0, 0, 0], [1, -1, 0], [0, 1, -1]], [[-1, 1, 0], [0, 0, 0], [1, -1, 0], [0, -1, 1]], [[-1, 0, 1], [0, 0, 0], [1, 0, -1], [-1, 1, 0]], [[-1, 0, 1], [0, 0, 0], [1, 0, -1], [1, -1, 0]], [[0, 0, 0], [-1, 1, 0], [-1, 0, 1], [0, -1, 1]], [[0, 0, 0], [1, -1, 0], [1, 0, -1], [0, 1, -1]]];
+	const possibleShapes = [{
+	  image: "../images/tile_hex_2.svg",
+	  coords: [[0, 0, 0]]
+	}, {
+	  image: "../images/tile_hex_3.svg",
+	  coords: [[-1, 0, 1], [0, 0, 0], [1, 0, -1], [2, 0, -2]]
+	}, {
+	  image: "../images/tile_hex_3.svg",
+	  coords: [[-1, 1, 0], [0, 0, 0], [1, -1, 0], [2, -2, 0]]
+	}, {
+	  image: "../images/tile_hex_3.svg",
+	  coords: [[0, -1, 1], [0, 0, 0], [0, 1, -1], [0, 2, -2]]
+	}, {
+	  image: "../images/tile_hex_4.svg",
+	  coords: [[0, -1, 1], [0, 0, 0], [0, 1, -1], [1, -1, 0]]
+	}, {
+	  image: "../images/tile_hex_4.svg",
+	  coords: [[0, -1, 1], [0, 0, 0], [0, 1, -1], [-1, 1, 0]]
+	}, {
+	  image: "../images/tile_hex_4.svg",
+	  coords: [[-1, 1, 0], [0, 0, 0], [1, -1, 0], [0, 1, -1]]
+	}, {
+	  image: "../images/tile_hex_4.svg",
+	  coords: [[-1, 1, 0], [0, 0, 0], [1, -1, 0], [0, -1, 1]]
+	}, {
+	  image: "../images/tile_hex_4.svg",
+	  coords: [[-1, 0, 1], [0, 0, 0], [1, 0, -1], [-1, 1, 0]]
+	}, {
+	  image: "../images/tile_hex_4.svg",
+	  coords: [[-1, 0, 1], [0, 0, 0], [1, 0, -1], [1, -1, 0]]
+	}, {
+	  image: "../images/tile_hex_1.svg",
+	  coords: [[0, 0, 0], [-1, 1, 0], [-1, 0, 1], [0, -1, 1]]
+	}, {
+	  image: "../images/tile_hex_1.svg",
+	  coords: [[0, 0, 0], [1, -1, 0], [1, 0, -1], [0, 1, -1]]
+	}];
 
 	function Shape(context) {
 	  this._context = context;
-	  this.image = "../images/tile_hex_1.svg";
 	  this.tiles = this.makeTilesFromCoords(_.sample(possibleShapes));
 	}
 
-	Shape.prototype.makeTilesFromCoords = function (coordsSet) {
+	Shape.prototype.makeTilesFromCoords = function (shapeOpts) {
 	  var shape = this;
-	  return coordsSet.map(function (coords) {
+	  this.image = shapeOpts.image;
+	  return shapeOpts.coords.map(function (coords) {
 	    var [x, y, z] = coords;
 	    return {
 	      x: x, y: y, z: z,
-	      tile: new Tile(shape.image)
+	      tile: new Tile(shapeOpts.image)
 	    };
 	  });
 	};
