@@ -1851,7 +1851,7 @@
 	const hexHelper = __webpack_require__(5);
 
 	var defaultImage = new Image();
-	defaultImage.src = "../images/slot_hex.svg";
+	defaultImage.src = "images/slot_hex.svg";
 
 	var image_width = hexHelper.size * 2 - 2;
 
@@ -2011,40 +2011,40 @@
 	var image_width = hexHelper.size * 2 - 2;
 
 	const possibleShapes = [{
-	  image: "../images/tile_hex_2.svg",
+	  image: "images/tile_hex_2.svg",
 	  coords: [[0, 0, 0]]
 	}, {
-	  image: "../images/tile_hex_3.svg",
+	  image: "images/tile_hex_3.svg",
 	  coords: [[-1, 0, 1], [0, 0, 0], [1, 0, -1], [2, 0, -2]]
 	}, {
-	  image: "../images/tile_hex_3.svg",
+	  image: "images/tile_hex_3.svg",
 	  coords: [[-1, 1, 0], [0, 0, 0], [1, -1, 0], [2, -2, 0]]
 	}, {
-	  image: "../images/tile_hex_3.svg",
+	  image: "images/tile_hex_3.svg",
 	  coords: [[0, -1, 1], [0, 0, 0], [0, 1, -1], [0, 2, -2]]
 	}, {
-	  image: "../images/tile_hex_4.svg",
+	  image: "images/tile_hex_4.svg",
 	  coords: [[0, -1, 1], [0, 0, 0], [0, 1, -1], [1, -1, 0]]
 	}, {
-	  image: "../images/tile_hex_4.svg",
+	  image: "images/tile_hex_4.svg",
 	  coords: [[0, -1, 1], [0, 0, 0], [0, 1, -1], [-1, 1, 0]]
 	}, {
-	  image: "../images/tile_hex_4.svg",
+	  image: "images/tile_hex_4.svg",
 	  coords: [[-1, 1, 0], [0, 0, 0], [1, -1, 0], [0, 1, -1]]
 	}, {
-	  image: "../images/tile_hex_4.svg",
+	  image: "images/tile_hex_4.svg",
 	  coords: [[-1, 1, 0], [0, 0, 0], [1, -1, 0], [0, -1, 1]]
 	}, {
-	  image: "../images/tile_hex_4.svg",
+	  image: "images/tile_hex_4.svg",
 	  coords: [[-1, 0, 1], [0, 0, 0], [1, 0, -1], [-1, 1, 0]]
 	}, {
-	  image: "../images/tile_hex_4.svg",
+	  image: "images/tile_hex_4.svg",
 	  coords: [[-1, 0, 1], [0, 0, 0], [1, 0, -1], [1, -1, 0]]
 	}, {
-	  image: "../images/tile_hex_1.svg",
+	  image: "images/tile_hex_1.svg",
 	  coords: [[0, 0, 0], [-1, 1, 0], [-1, 0, 1], [0, -1, 1]]
 	}, {
-	  image: "../images/tile_hex_1.svg",
+	  image: "images/tile_hex_1.svg",
 	  coords: [[0, 0, 0], [1, -1, 0], [1, 0, -1], [0, 1, -1]]
 	}];
 

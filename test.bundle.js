@@ -1758,7 +1758,7 @@
 	const hexHelper = __webpack_require__(5);
 
 	var defaultImage = new Image();
-	defaultImage.src = "../images/slot_hex.svg";
+	defaultImage.src = "images/slot_hex.svg";
 
 	var image_width = hexHelper.size * 2 - 2;
 
