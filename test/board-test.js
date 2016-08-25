@@ -79,7 +79,7 @@ describe('board', function(){
       }
     });
 
-    it("has remaining moves when the board is empty", function(){
+    it("has no remaining moves when the board is full", function(){
       var board = new Board();
       board.slots.forEach(function(slot){
         slot.tile = new Tile();
