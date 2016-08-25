@@ -18,7 +18,7 @@
     "url": "https://github.com/turingschool-examples/game-time-starter-kit/issues"
   },
   "homepage": "https://github.com/turingschool-examples/game-time-starter-kit",
-  "devDependencies": {
+ "devDependencies": {
     "babel": "^6.5.2",
     "babel-core": "^6.11.4",
     "babel-loader": "^6.2.4",
@@ -30,8 +30,8 @@
     "node-sass": "^3.2.0",
     "sass-loader": "^4.0.0",
     "style-loader": "^0.13.1",
-    "webpack": "^1.10.1",
-    "webpack-dev-server": "^1.10.1"
+    "webpack": "1.14.1",
+    "webpack-dev-server": "1.14.1"
   },
   "dependencies": {
     "underscore": "^1.8.3"
