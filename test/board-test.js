@@ -4,6 +4,7 @@ var _ = require('underscore');
 const Board = require('../lib/board');
 const Shape = require('../lib/shape');
 const Tile = require('../lib/tile');
+const Hex = require('../lib/hex')
 
 describe('board', function(){
   context('initialization',function(){
@@ -19,16 +20,16 @@ describe('board', function(){
     it('should have slots with coordinates', function(){
       var board = new Board();
       board.slots.forEach(function(slot){
-        assert.isNumber(slot.x);
-        assert.isNumber(slot.y);
-        assert.isNumber(slot.z);
+        assert.isNumber(slot.hex.x);
+        assert.isNumber(slot.hex.y);
+        assert.isNumber(slot.hex.z);
       })
     })
 
     it('should have slots with coordinates that equal zero', function(){
       var board = new Board();
       board.slots.forEach(function(slot){
-        assert.equal(slot.x + slot.y + slot.z, 0);
+        assert.equal(slot.hex.x + slot.hex.y + slot.hex.z, 0);
       })
     })
   })
@@ -37,19 +38,19 @@ describe('board', function(){
 
     it('should be able to get slot by coords', function() {
       var board = new Board();
-      slot = board.coordsToSlot(0,0,0);
-      assert.equal(slot.x, 0);
-      assert.equal(slot.y, 0);
-      assert.equal(slot.z, 0);
+      hex = board.coordsToSlot(0,0,0).hex;
+      assert.equal(hex.x, 0);
+      assert.equal(hex.y, 0);
+      assert.equal(hex.z, 0);
     });
 
     it('should be able to get all slots by coords', function() {
       var board = new Board();
       board.slots.forEach(function(slot) {
-        slotFound = board.coordsToSlot(slot.x, slot.y, slot.z);
-        assert.equal(slotFound.x, slot.x);
-        assert.equal(slotFound.y, slot.y);
-        assert.equal(slotFound.z, slot.z);
+        hexFound = board.coordsToSlot(slot.hex.x, slot.hex.y, slot.hex.z).hex;
+        assert.equal(hexFound.x, slot.hex.x);
+        assert.equal(hexFound.y, slot.hex.y);
+        assert.equal(hexFound.z, slot.hex.z);
       })
     });
 
@@ -59,7 +60,7 @@ describe('board', function(){
     it('can place shapes in the middle of a blank board', function(){
       var board = new Board();
       for(var i = 0; i < 50; i++){
-        assert(board.validShapeAtCoords(0,0,0, new Shape()));
+        assert(board.validShapeAtCoords(new Hex(0,0,0), new Shape()));
       }
     })
 
@@ -67,7 +68,7 @@ describe('board', function(){
         var board = new Board();
         board.coordsToSlot(0,0,0).tile = new Tile();
         for(var i = 0; i < 50; i++){
-          assert.isFalse(board.validShapeAtCoords(0,0,0, new Shape()));
+          assert.isFalse(board.validShapeAtCoords(new Hex(0,0,0), new Shape()));
         }
     });
 
@@ -97,7 +98,7 @@ describe('board', function(){
       _.range(-board.boardSize, board.boardSize).forEach(function(rowNum) {
         ["x", "y", "z"].forEach(function(axis) {
           board.getRow(axis, rowNum).forEach(function(slot) {
-            assert.equal(slot[axis], rowNum);
+            assert.equal(slot.hex[axis], rowNum);
           });
         });
       });
