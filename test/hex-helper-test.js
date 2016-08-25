@@ -99,5 +99,22 @@ describe('Hex Helper', function(){
         assert.equal(cz, hz);
       })
     });
+
   });
+
+  context('math', function() {
+    it('can add vectors', function() {
+      var vector = hexHelper.addVector2({x: 1, y: 1}, {x: 1, y: 1});
+      assert.equal(vector.x, 2);
+      assert.equal(vector.y, 2);
+    });
+
+    it('can add float vectors', function() {
+      var vector = hexHelper.addVector2({x: 1.1, y: 1.1}, {x: 1.1, y: 1.1});
+      assert.equal(vector.x, 2.2);
+      assert.equal(vector.y, 2.2);
+    });
+
+  });
+
 });
